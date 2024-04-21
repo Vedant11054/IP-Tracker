@@ -13,8 +13,18 @@ def track_ip():
     access_token = 'your_token_here'
     url = f'https://ipinfo.io/{ip_address}?token={access_token}'
     response = requests.get(url)
-    if response.status_code == 200:
-        return jsonify(response.json())
+    if response.status_code == 200;
+        data = response.json()
+            city = data.get('city', 'Unknown')
+            region = data.get('region', 'Unknown')
+            country = data.get('country', 'Unknown')
+            isp = data.get('org', 'Unknown')
+            return {
+                'City': city,
+                'Region': region,
+                'Country': country,
+                'ISP': isp
+            }
     else:
         return jsonify({"error": "Failed to retrieve information"}), response.status_code
 
