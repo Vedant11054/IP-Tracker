@@ -1,37 +1,42 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import requests
 
-app = Flask(__name__)
+app = Flask(_name_)
 
-def get_ip_info(ip_address):
-    url = f"https://ipinfo.io/{ip_address}/json"
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/lookup', methods=['POST'])
+def lookup():
+    mobile_number = request.form['mobile_number']
+    api_url = f'https://api.numlookupapi.com/v1/validate/{mobile_number}?apikey=num_live_BdEsxjw0Wp5W4hAhEJF4bY3L756HIQD6rOPY1JBt'
+
     try:
-        response = requests.get(url)
+        response = requests.get(api_url)
+        data = response.json()
+
         if response.status_code == 200:
-            data = response.json()
-            city = data.get('city', 'Unknown')
-            region = data.get('region', 'Unknown')
-            country = data.get('country', 'Unknown')
-            isp = data.get('org', 'Unknown')
-            return {
-                'City': city,
-                'Region': region,
-                'Country': country,
-                'ISP': isp
-            }
+            is_valid = data.get('valid', False)
+            if is_valid:
+                number = data.get('number')
+                country_code = data.get('country_code')
+                country_name = data.get('country_name')
+                location = data.get('location', 'Unknown')
+                line_type = data.get('line_type', 'Unknown')
+
+                return render_template('result.html', 
+                                       message=f"Mobile number {number} is valid.",
+                                       country=f"Country: {country_name} ({country_code})",
+                                       location=f"Location: {location}",
+                                       line_type=f"Line Type: {line_type}")
+            else:
+                return render_template('result.html', message=f"Mobile number {mobile_number} is invalid.")
         else:
-            return None
-    except requests.exceptions.RequestException:
-        return None
+            return render_template('result.html', message='Error validating mobile number.')
+    
+    except Exception as e:
+        return render_template('result.html', message='Error validating mobile number.')
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    ip_info = None
-    if request.method == 'POST':
-        ip_address = request.form['ip_address']
-        if ip_address:
-            ip_info = get_ip_info(ip_address)
-    return render_template('index.html', ip_info=ip_info)
-
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
