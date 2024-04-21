@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validation Result</title>
+    <title>DESCAM IP ADDRESS TRACKER</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Validation Result</h1>
-    <p>{{ message }}</p>
-    {% if country %}
-    <p>{{ country }}</p>
+    <h1>DESCAM IP TRACKER</h1>
+    <form method="POST">
+        <label for="ip_address">Enter IP Address:</label>
+        <input type="text" id="ip_address" name="ip_address" required>
+        <button type="submit">Track</button>
+    </form>
+    {% if ip_info %}
+        <h2>IP Information:</h2>
+        <p>City: {{ ip_info.City }}</p>
+        <p>Region: {{ ip_info.Region }}</p>
+        <p>Country: {{ ip_info.Country }}</p>
+        <p>ISP: {{ ip_info.ISP }}</p>
     {% endif %}
-    {% if location %}
-    <p>{{ location }}</p>
-    {% endif %}
-    {% if line_type %}
-    <p>{{ line_type }}</p>
-    {% endif %}
+    <h6>By Shubham Kulkarni and Team</h6>
 </body>
 </html>
